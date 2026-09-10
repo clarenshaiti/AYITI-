@@ -15,11 +15,13 @@ Then visit:
 
 http://localhost:8000/
 
-## Live preview deployment (GitHub Pages)
+## Live preview deployment options
+
+### Option 1: GitHub Pages
 
 This project includes a GitHub Actions workflow for a live preview deployment on GitHub Pages.
 
-### Steps
+#### Steps
 
 1. Push the repository to GitHub.
 2. In GitHub, open the repository.
@@ -31,6 +33,23 @@ This project includes a GitHub Actions workflow for a live preview deployment on
 The public site URL will be:
 
 https://<your-username>.github.io/AYITI-/
+
+### Option 2: Netlify
+
+A Netlify config file is included in the repo to make deployment straightforward.
+
+#### Steps
+
+1. Push the repository to GitHub.
+2. Sign in to Netlify.
+3. Click "Add new site" → "Import an existing project".
+4. Select the GitHub repository.
+5. Keep the default build settings, or set:
+   - Build command: leave blank
+   - Publish directory: `.`
+6. Deploy the site.
+
+Netlify will publish your app automatically on every push.
 
 ## Files
 
