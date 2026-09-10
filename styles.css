@@ -12,6 +12,7 @@
   --gold: #e7b75c;
   --mint: #dff4eb;
   --shadow: 0 16px 32px rgba(22, 35, 49, 0.12);
+  --shadow-deep: 0 24px 34px rgba(18, 42, 60, 0.18), 0 4px 8px rgba(18, 42, 60, 0.08);
   --radius-xl: 26px;
   --radius-lg: 18px;
   --radius-md: 14px;
@@ -28,7 +29,9 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #edf3f5 0%, #f7f5f3 100%);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.95) 0 7%, transparent 26%),
+    linear-gradient(135deg, #e8f0f4 0%, #f8f4ef 52%, #e8f2ef 100%);
   font-family: "DM Sans", sans-serif;
   color: var(--ink);
 }
@@ -79,6 +82,8 @@ select:focus {
   border-right: 1px solid rgba(18, 59, 89, 0.05);
   position: relative;
   padding-bottom: 96px;
+  perspective: 1200px;
+  box-shadow: 0 30px 80px rgba(22, 35, 49, 0.1);
 }
 
 .topbar {
@@ -113,6 +118,8 @@ select:focus {
   color: white;
   border-radius: 9px;
   font-size: 0.95rem;
+  box-shadow: inset 2px 2px 3px rgba(255, 255, 255, 0.22), 0 6px 10px rgba(18, 59, 89, 0.24);
+  transform: translateZ(8px);
 }
 
 .top-actions {
@@ -315,7 +322,8 @@ h2 {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.9rem 1rem;
-  box-shadow: 0 10px 20px rgba(18, 59, 89, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 10px 0 var(--navy-deep), 0 16px 24px rgba(18, 59, 89, 0.2);
+  transform: translateY(-2px);
 }
 
 .primary-button.full {
@@ -332,6 +340,11 @@ h2 {
   transform: translateY(-1px);
 }
 
+.primary-button:active {
+  transform: translateY(5px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 4px 0 var(--navy-deep), 0 8px 14px rgba(18, 59, 89, 0.16);
+}
+
 .spotlight-art {
   width: 110px;
   min-height: 107px;
@@ -342,6 +355,37 @@ h2 {
   color: var(--navy);
   text-align: center;
   font-weight: 700;
+  position: relative;
+  transform: rotateY(-12deg) rotateX(7deg) translateZ(12px);
+  box-shadow: inset 10px 10px 22px rgba(255, 255, 255, 0.2), inset -10px -12px 22px rgba(18, 59, 89, 0.12), 14px 18px 22px rgba(18, 59, 89, 0.12);
+}
+
+.spotlight-art::before,
+.spotlight-art::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.spotlight-art::before {
+  width: 56px;
+  height: 56px;
+  top: 12px;
+  right: 10px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.08));
+  transform: rotate(18deg) translateZ(20px);
+}
+
+.spotlight-art::after {
+  width: 72px;
+  height: 14px;
+  bottom: -13px;
+  left: 18px;
+  border-radius: 50%;
+  background: rgba(18, 59, 89, 0.18);
+  filter: blur(7px);
+  transform: rotateX(65deg);
 }
 
 .spotlight-art span {
@@ -400,6 +444,14 @@ h2 {
   align-items: center;
   gap: 0.75rem;
   min-height: 70px;
+  box-shadow: 7px 8px 0 rgba(18, 59, 89, 0.06), var(--shadow);
+  transform: translateZ(0);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 10px 14px 0 rgba(18, 59, 89, 0.06), var(--shadow-deep);
 }
 
 .category-badge {
@@ -432,6 +484,14 @@ h2 {
   overflow: hidden;
   border: 1px solid rgba(18, 59, 89, 0.05);
   box-shadow: 0 8px 18px rgba(17, 27, 36, 0.04);
+  transform: translateZ(0) rotateX(0deg);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transform-style: preserve-3d;
+}
+
+.listing-card:hover {
+  transform: translateY(-7px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: var(--shadow-deep);
 }
 
 .listing-media {
@@ -444,6 +504,12 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.02) translateZ(10px);
+  transition: transform 0.35s ease;
+}
+
+.listing-card:hover .listing-media img {
+  transform: scale(1.08) translateZ(10px);
 }
 
 .card-actions {
@@ -755,6 +821,7 @@ textarea {
   padding: 0.9rem 0.75rem;
   text-align: center;
   border: 1px solid rgba(18, 59, 89, 0.05);
+  box-shadow: 5px 6px 0 rgba(18, 59, 89, 0.05), 0 12px 20px rgba(18, 35, 50, 0.05);
 }
 
 .profile-stats strong {
