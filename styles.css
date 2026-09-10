@@ -643,7 +643,7 @@ h2 {
 .photo-drop {
   display: grid;
   gap: 0.8rem;
-  min-height: 135px;
+  min-height: 170px;
   background: linear-gradient(135deg, #f7f9fb 0%, #edf8f5 100%);
   border: 1px dashed rgba(18, 59, 89, 0.2);
   border-radius: 18px;
@@ -656,9 +656,10 @@ h2 {
   width: 100%;
   display: grid;
   place-items: center;
-  gap: 0.4rem;
+  gap: 0.6rem;
   color: var(--navy);
   text-align: center;
+  padding: 0.35rem;
 }
 
 .photo-picker > span {
@@ -674,6 +675,7 @@ h2 {
 .photo-picker small {
   color: var(--muted);
   max-width: 230px;
+  line-height: 1.45;
 }
 
 .photo-preview-grid {

@@ -110,8 +110,8 @@
       <section class="view" id="sellView">
         <div class="page-heading">
           <p class="eyebrow">AYITI SELL</p>
-          <h1 data-i18n="sellTitle">Votre objet mérite une nouvelle histoire.</h1>
-          <p data-i18n="sellIntro">Publiez gratuitement et échangez en toute confiance.</p>
+          <h1>Give your item a new story.</h1>
+          <p>List it for free and trade with confidence.</p>
         </div>
 
         <form class="sell-form" id="sellForm">
@@ -119,47 +119,61 @@
             <input id="photoInput" name="photos" type="file" accept="image/*" multiple hidden />
             <button class="photo-picker" id="photoPicker" type="button">
               <span>＋</span>
-              <strong data-i18n="addPhotos">Ajouter des photos</strong>
-              <small>Jusqu'à 8 photos · la première sera la couverture</small>
+              <strong>Add photos</strong>
+              <small>Up to 8 photos · the first one will be the cover</small>
             </button>
             <div class="photo-preview-grid" id="photoPreviewGrid" aria-live="polite"></div>
           </div>
 
-          <label>Titre<input required name="title" placeholder="Ex. Canapé 3 places" /></label>
+          <label>Item title<input required name="title" placeholder="Example: 3-seat sofa" /></label>
 
           <div class="form-row">
-            <label>Catégorie<select name="category">
-              <option value="home">Maison</option>
-              <option value="mode">Mode</option>
-              <option value="tech">Électronique</option>
-              <option value="beauty">Beauté</option>
-              <option value="vehicles">Véhicules</option>
+            <label>Category<select name="category">
+              <option value="home">Home</option>
+              <option value="mode">Fashion</option>
+              <option value="tech">Electronics</option>
+              <option value="beauty">Beauty</option>
+              <option value="vehicles">Vehicles</option>
             </select></label>
 
-            <label>État<select name="condition">
-              <option>Comme neuf</option>
-              <option>Très bon état</option>
-              <option>Bon état</option>
-              <option>Neuf</option>
+            <label>Condition<select name="condition">
+              <option>Like new</option>
+              <option>Very good</option>
+              <option>Good</option>
+              <option>New</option>
             </select></label>
           </div>
 
           <div class="form-row">
-            <label>Prix<input required name="price" type="number" min="1" placeholder="0" /></label>
-            <label>Devise<select name="currency">
+            <label>Brand<input name="brand" placeholder="Example: Samsung" /></label>
+            <label>Size or model<input name="size" placeholder="Example: M or 128 GB" /></label>
+          </div>
+
+          <div class="form-row">
+            <label>Price<input required name="price" type="number" min="1" placeholder="0" /></label>
+            <label>Currency<select name="currency">
               <option value="HTG">HTG · Gourdes</option>
               <option value="DOP">DOP · Pesos</option>
             </select></label>
           </div>
 
-          <p class="form-hint">Une estimation dans l'autre devise sera affichée automatiquement.</p>
+          <div class="form-row">
+            <label>Quantity<input name="quantity" type="number" min="1" value="1" /></label>
+            <label>Delivery<select name="delivery">
+              <option>Meet in person</option>
+              <option>Pickup only</option>
+              <option>Delivery available</option>
+            </select></label>
+          </div>
+
+          <p class="form-hint">A price estimate in the other currency will be shown automatically.</p>
 
           <div class="form-row">
-            <label>Pays<select name="country">
-              <option>Haïti</option>
-              <option>République dominicaine</option>
+            <label>Country<select name="country">
+              <option>Haiti</option>
+              <option>Dominican Republic</option>
             </select></label>
-            <label>Ville<select name="city">
+            <label>City<select name="city">
               <option>Port-au-Prince</option>
               <option>Pétion-Ville</option>
               <option>Cap-Haïtien</option>
@@ -168,10 +182,11 @@
             </select></label>
           </div>
 
-          <label>Quartier<input name="neighborhood" placeholder="Ex. Delmas 33" /></label>
-          <label>Description<textarea name="description" placeholder="Décrivez l'état, la taille et les détails utiles..."></textarea></label>
+          <label>Neighborhood<input name="neighborhood" placeholder="Example: Delmas 33" /></label>
+          <label>Contact phone<input name="phone" type="tel" placeholder="Example: +509 37 00 00 00" /></label>
+          <label>Description<textarea name="description" placeholder="Describe the condition, size, and useful details..."></textarea></label>
 
-          <button class="primary-button full" type="submit">Publier l'annonce <span>→</span></button>
+          <button class="primary-button full" type="submit">Publish listing <span>→</span></button>
         </form>
       </section>
 

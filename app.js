@@ -487,10 +487,15 @@ function bindEvents() {
     const title = form.get('title') || 'Nouvelle annonce';
     const category = form.get('category') || 'home';
     const condition = form.get('condition') || 'Bon état';
+    const brand = form.get('brand') || '';
+    const size = form.get('size') || '';
     const price = Number(form.get('price')) || 0;
     const currency = form.get('currency') || 'HTG';
+    const quantity = Number(form.get('quantity')) || 1;
+    const delivery = form.get('delivery') || 'Meet in person';
     const city = form.get('city') || 'Port-au-Prince';
     const neighborhood = form.get('neighborhood') || 'À proximité';
+    const phone = form.get('phone') || '';
     const image = state.selectedPhotoUrls[0] || listings[0].image;
 
     listings.unshift({
@@ -498,8 +503,13 @@ function bindEvents() {
       title,
       category,
       condition,
+      brand,
+      size,
       price,
       currency,
+      quantity,
+      delivery,
+      phone,
       estimate: `Environ ${formatPrice(Math.round(price * 1.15), currency)}`,
       city,
       neighborhood,
