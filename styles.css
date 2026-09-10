@@ -642,8 +642,7 @@ h2 {
 
 .photo-drop {
   display: grid;
-  place-items: center;
-  gap: 0.4rem;
+  gap: 0.8rem;
   min-height: 135px;
   background: linear-gradient(135deg, #f7f9fb 0%, #edf8f5 100%);
   border: 1px dashed rgba(18, 59, 89, 0.2);
@@ -653,7 +652,16 @@ h2 {
   text-align: center;
 }
 
-.photo-drop span {
+.photo-picker {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  gap: 0.4rem;
+  color: var(--navy);
+  text-align: center;
+}
+
+.photo-picker > span {
   width: 46px;
   height: 46px;
   display: grid;
@@ -663,9 +671,43 @@ h2 {
   font-size: 1.7rem;
 }
 
-.photo-drop small {
+.photo-picker small {
   color: var(--muted);
   max-width: 230px;
+}
+
+.photo-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.photo-preview {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #dce8ed;
+  box-shadow: 0 5px 10px rgba(18, 59, 89, 0.1);
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-preview:first-child::after {
+  content: "Couverture";
+  position: absolute;
+  left: 0.3rem;
+  bottom: 0.3rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.35rem;
+  background: rgba(18, 59, 89, 0.85);
+  color: white;
+  font-size: 0.55rem;
+  font-weight: 700;
 }
 
 .sell-form label {

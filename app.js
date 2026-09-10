@@ -122,6 +122,7 @@ const state = {
   user: null,
   authMode: 'signup',
   supabase: null,
+  selectedPhotoUrls: [],
 };
 
 const supabaseConfig = {
@@ -320,6 +321,17 @@ function showToast(message) {
   showToast.timeoutId = setTimeout(() => toast.classList.remove('show'), 1800);
 }
 
+function renderPhotoPreviews(files) {
+  const previewGrid = document.getElementById('photoPreviewGrid');
+  state.selectedPhotoUrls.forEach((url) => URL.revokeObjectURL(url));
+  state.selectedPhotoUrls = Array.from(files).slice(0, 8).map((file) => URL.createObjectURL(file));
+  previewGrid.innerHTML = state.selectedPhotoUrls.map((url, index) => `
+    <div class="photo-preview">
+      <img src="${url}" alt="Photo ${index + 1}" />
+    </div>
+  `).join('');
+}
+
 function openDetail(itemId) {
   const item = listings.find((entry) => entry.id === Number(itemId));
   if (!item) return;
@@ -431,6 +443,14 @@ function bindEvents() {
   document.getElementById('filterButton').addEventListener('click', () => openView('searchView'));
   document.getElementById('languageToggle').addEventListener('click', toggleLanguage);
 
+  document.getElementById('photoPicker').addEventListener('click', () => {
+    document.getElementById('photoInput').click();
+  });
+
+  document.getElementById('photoInput').addEventListener('change', (event) => {
+    renderPhotoPreviews(event.target.files);
+  });
+
   document.getElementById('searchInput').addEventListener('input', (event) => {
     state.searchQuery = event.target.value;
     renderHomeListings();
@@ -465,8 +485,34 @@ function bindEvents() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const title = form.get('title') || 'Nouvelle annonce';
+    const category = form.get('category') || 'home';
+    const condition = form.get('condition') || 'Bon état';
+    const price = Number(form.get('price')) || 0;
+    const currency = form.get('currency') || 'HTG';
+    const city = form.get('city') || 'Port-au-Prince';
+    const neighborhood = form.get('neighborhood') || 'À proximité';
+    const image = state.selectedPhotoUrls[0] || listings[0].image;
+
+    listings.unshift({
+      id: Date.now(),
+      title,
+      category,
+      condition,
+      price,
+      currency,
+      estimate: `Environ ${formatPrice(Math.round(price * 1.15), currency)}`,
+      city,
+      neighborhood,
+      image,
+      favorite: false,
+    });
+
+    renderHomeListings();
+    renderBrowseListings();
+    renderProfileListings();
     showToast(`${title} a été publiée.`);
     event.currentTarget.reset();
+    renderPhotoPreviews([]);
     openView('homeView');
   });
 
