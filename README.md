@@ -51,6 +51,24 @@ A Netlify config file is included in the repo to make deployment straightforward
 
 Netlify will publish your app automatically on every push.
 
+### Option 3: Vercel
+
+A `vercel.json` file is included so the app can be deployed as a static site on Vercel.
+
+#### Steps
+
+1. Push the repository to GitHub.
+2. Sign in to Vercel.
+3. Click "Add New Project".
+4. Import the GitHub repository.
+5. Keep the default settings, or set:
+   - Framework Preset: Other
+   - Build Command: leave blank
+   - Output Directory: `.`
+6. Deploy.
+
+Vercel will publish the app and generate a preview URL for each branch.
+
 ## Files
 
 - `index.html` — app shell and page structure
