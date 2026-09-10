@@ -19,6 +19,7 @@
       </a>
       <div class="top-actions">
         <button class="icon-button" id="languageToggle" aria-label="Changer de langue">FR</button>
+        <button class="text-button auth-link" id="authButton" type="button">S’inscrire</button>
         <button class="avatar" id="profileShortcut" aria-label="Ouvrir le profil">M</button>
       </div>
     </header>
@@ -365,8 +366,57 @@
     </article>
   </div>
 
+  <div class="auth-modal" id="authModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-auth></div>
+    <article class="auth-sheet">
+      <button class="modal-close" data-close-auth aria-label="Fermer">×</button>
+      <div class="auth-header">
+        <p class="eyebrow">COMPTE</p>
+        <h2 id="authTitle">Créez votre compte Ayiti</h2>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Authentification">
+        <button class="auth-tab active" type="button" data-auth-mode="signup">S’inscrire</button>
+        <button class="auth-tab" type="button" data-auth-mode="login">Se connecter</button>
+      </div>
+
+      <form id="signupForm" class="auth-form auth-form-visible">
+        <label>Nom complet<input required type="text" name="name" placeholder="Marie Joseph" /></label>
+        <label>Email<input required type="email" name="email" placeholder="vous@email.com" /></label>
+        <label>Mot de passe<input required type="password" name="password" placeholder="••••••••" /></label>
+        <label>Ville<select name="city">
+          <option>Port-au-Prince</option>
+          <option>Pétion-Ville</option>
+          <option>Cap-Haïtien</option>
+          <option>Santo Domingo</option>
+          <option>Santiago</option>
+        </select></label>
+        <button class="primary-button full" type="submit">Créer mon compte <span>→</span></button>
+      </form>
+
+      <form id="loginForm" class="auth-form auth-form-hidden">
+        <label>Email<input required type="email" name="email" placeholder="vous@email.com" /></label>
+        <label>Mot de passe<input required type="password" name="password" placeholder="••••••••" /></label>
+        <button class="primary-button full" type="submit">Se connecter <span>→</span></button>
+      </form>
+
+      <div id="passwordResetBox" class="auth-extra">
+        <button type="button" class="link-button" id="resetPasswordBtn">Réinitialiser le mot de passe</button>
+      </div>
+
+      <p class="auth-footer">Vous avez déjà un compte ? <button type="button" class="link-button" id="switchToLogin">Se connecter</button></p>
+    </article>
+  </div>
+
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.ayitiSupabase = {
+      url: 'https://YOUR_PROJECT_REF.supabase.co',
+      key: 'YOUR_SUPABASE_ANON_KEY'
+    };
+  </script>
   <script src="app.js"></script>
 </body>
 </html>

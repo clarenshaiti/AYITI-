@@ -119,7 +119,45 @@ const state = {
   activeFilter: 'all',
   language: 'fr',
   searchQuery: '',
+  user: null,
+  authMode: 'signup',
+  supabase: null,
 };
+
+const supabaseConfig = {
+  url: (window.ayitiSupabase && window.ayitiSupabase.url) || 'https://YOUR_PROJECT_REF.supabase.co',
+  key: (window.ayitiSupabase && window.ayitiSupabase.key) || 'YOUR_SUPABASE_ANON_KEY',
+};
+
+async function initSupabase() {
+  if (!window.supabase || supabaseConfig.url.includes('YOUR_PROJECT_REF') || supabaseConfig.key.includes('YOUR_')) {
+    return null;
+  }
+
+  const { createClient } = window.supabase;
+  const client = createClient(supabaseConfig.url, supabaseConfig.key, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
+
+  state.supabase = client;
+  return client;
+}
+
+async function handleSupabaseResponse(response, successMessage) {
+  if (response?.error) {
+    throw new Error(response.error.message || 'Une erreur est survenue.');
+  }
+
+  if (successMessage) {
+    showToast(successMessage);
+  }
+
+  return response;
+}
 
 const translations = {
   fr: {
@@ -316,6 +354,59 @@ function updateFavorites(id) {
   renderProfileListings();
 }
 
+function loadUser() {
+  const user = localStorage.getItem('ayiti-user');
+  if (user) {
+    state.user = JSON.parse(user);
+  }
+}
+
+function saveUser(user) {
+  state.user = user;
+  localStorage.setItem('ayiti-user', JSON.stringify(user));
+  updateProfileHeader();
+}
+
+function updateProfileHeader() {
+  const profileName = document.querySelector('#profileView h1');
+  const profileMeta = document.querySelector('#profileView .profile-header p');
+  if (state.user && profileName) {
+    profileName.textContent = state.user.name || 'Utilisateur';
+    profileMeta.innerHTML = `⌖ ${state.user.city || 'Pétion-Ville'} · ★ 4.9 <span class="muted">(18 avis)</span>`;
+    document.getElementById('profileShortcut').textContent = (state.user.name || 'U').charAt(0).toUpperCase();
+  }
+}
+
+function openAuthModal(mode = 'signup') {
+  state.authMode = mode;
+  const modal = document.getElementById('authModal');
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  setAuthView(mode);
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('authModal').setAttribute('aria-hidden', 'true');
+}
+
+function setAuthView(mode) {
+  state.authMode = mode;
+  const signupForm = document.getElementById('signupForm');
+  const loginForm = document.getElementById('loginForm');
+  const authTitle = document.getElementById('authTitle');
+  const tabs = document.querySelectorAll('.auth-tab');
+
+  const isSignup = mode === 'signup';
+  signupForm.classList.toggle('auth-form-hidden', !isSignup);
+  signupForm.classList.toggle('auth-form-visible', isSignup);
+  loginForm.classList.toggle('auth-form-hidden', isSignup);
+  loginForm.classList.toggle('auth-form-visible', !isSignup);
+
+  authTitle.textContent = isSignup ? 'Créez votre compte Ayiti' : 'Bon retour sur Ayiti';
+  tabs.forEach((tab) => tab.classList.toggle('active', tab.dataset.authMode === mode));
+}
+
 function bindEvents() {
   document.querySelectorAll('.nav-item').forEach((button) => {
     button.addEventListener('click', () => openView(button.dataset.view));
@@ -332,6 +423,11 @@ function bindEvents() {
   });
 
   document.getElementById('profileShortcut').addEventListener('click', () => openView('profileView'));
+  document.getElementById('authButton').addEventListener('click', () => openAuthModal('signup'));
+  document.getElementById('switchToLogin').addEventListener('click', () => openAuthModal('login'));
+  document.querySelectorAll('.auth-tab').forEach((tab) => {
+    tab.addEventListener('click', () => setAuthView(tab.dataset.authMode));
+  });
   document.getElementById('filterButton').addEventListener('click', () => openView('searchView'));
   document.getElementById('languageToggle').addEventListener('click', toggleLanguage);
 
@@ -374,6 +470,113 @@ function bindEvents() {
     openView('homeView');
   });
 
+  document.getElementById('signupForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!state.supabase) {
+      const form = new FormData(event.currentTarget);
+      const user = {
+        name: form.get('name') || 'Nouvel utilisateur',
+        email: form.get('email') || '',
+        city: form.get('city') || 'Port-au-Prince',
+        createdAt: new Date().toISOString(),
+      };
+      saveUser(user);
+      closeAuthModal();
+      event.currentTarget.reset();
+      showToast(`Bienvenue, ${user.name}!`);
+      openView('profileView');
+      return;
+    }
+
+    try {
+      const form = new FormData(event.currentTarget);
+      const email = String(form.get('email') || '').trim();
+      const password = String(form.get('password') || '');
+      const name = String(form.get('name') || '').trim();
+      const city = String(form.get('city') || 'Port-au-Prince');
+
+      const { data, error } = await state.supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name, city },
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.user) {
+        saveUser({ name, email, city, createdAt: new Date().toISOString() });
+      }
+
+      closeAuthModal();
+      event.currentTarget.reset();
+      showToast('Compte créé. Vérifiez votre email pour confirmer votre inscription.');
+      openView('profileView');
+    } catch (error) {
+      showToast(error.message || 'Échec de l’inscription.');
+    }
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!state.supabase) {
+      showToast('Configurez Supabase pour activer la connexion réelle.');
+      return;
+    }
+
+    try {
+      const form = new FormData(event.currentTarget);
+      const email = String(form.get('email') || '').trim();
+      const password = String(form.get('password') || '');
+      const { data, error } = await state.supabase.auth.signInWithPassword({ email, password });
+
+      if (error) throw error;
+      const user = data?.user;
+      const profile = user?.user_metadata || {};
+
+      saveUser({
+        name: profile.full_name || 'Utilisateur',
+        email: user?.email || email,
+        city: profile.city || 'Port-au-Prince',
+        createdAt: new Date().toISOString(),
+      });
+
+      closeAuthModal();
+      event.currentTarget.reset();
+      showToast('Connexion réussie.');
+      openView('profileView');
+    } catch (error) {
+      showToast(error.message || 'Connexion impossible.');
+    }
+  });
+
+  document.getElementById('resetPasswordBtn').addEventListener('click', async () => {
+    if (!state.supabase) {
+      showToast('Configurez Supabase pour réinitialiser le mot de passe.');
+      return;
+    }
+
+    const email = window.prompt('Entrez votre adresse email pour recevoir le lien de réinitialisation :');
+    if (!email) return;
+
+    try {
+      const { error } = await state.supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      showToast('Lien de réinitialisation envoyé.');
+    } catch (error) {
+      showToast(error.message || 'Impossible d’envoyer le lien.');
+    }
+  });
+
+  document.querySelectorAll('[data-close-auth]').forEach((element) => {
+    element.addEventListener('click', closeAuthModal);
+  });
+
   document.getElementById('locationButton').addEventListener('click', () => showToast('Localisation : Port-au-Prince'));
   document.getElementById('messageSeller').addEventListener('click', () => showToast('Message envoyé au vendeur.'));
   document.getElementById('reportListing').addEventListener('click', () => showToast('Annonce signalée.'));
@@ -397,12 +600,15 @@ function bindEvents() {
   });
 }
 
-function init() {
+async function init() {
+  loadUser();
   renderCategories();
   renderHomeListings();
   renderBrowseListings();
   renderProfileListings();
   bindEvents();
+  updateProfileHeader();
+  await initSupabase();
   toggleLanguage();
   openView('homeView');
 }
